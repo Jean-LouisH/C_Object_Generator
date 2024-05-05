@@ -32,7 +32,7 @@ def convert_to_snake_case(src_content):
                 if character.isupper():
                     parse_state = "is_reading_upper_characters"
 					
-			converted_src_content += character
+        converted_src_content += character
 
     #Insert the underscores
     indices_to_underscore.reverse()
@@ -77,27 +77,30 @@ def generate_c_object(
     header_contents += "typedef struct\n{\n}" + project_object_name + ";\n\n"
 
 
-    #functions
+    #function definitions
     decl_spec_macro_insertion = ""
     
     if declspec_macro != "":
         decl_spec_macro_insertion = declspec_macro + " "
 
-    project_class_allocation_string = decl_spec_macro_insertion + project_object_name + "* " + snake_case_project_object_name.lower() + "_allocate()"
-    project_class_free_string = decl_spec_macro_insertion + "void " + snake_case_project_object_name.lower() + "_free(" + project_object_name + "* " + c_object_name.lower() + ")"
-    project_class_function_string = decl_spec_macro_insertion + "void " + snake_case_project_object_name.lower() + "_function(" + project_object_name + "* " + c_object_name.lower() + ")"
+    project_class_allocation_string = project_object_name + "* " + snake_case_project_object_name.lower() + "_allocate()"
+    project_class_free_string = "void " + snake_case_project_object_name.lower() + "_free(" + project_object_name + "* " + c_object_name.lower() + ")"
+    project_class_function_string = "void " + snake_case_project_object_name.lower() + "_function(" + project_object_name + "* " + c_object_name.lower() + ")"
 
         
-    header_contents += (project_class_allocation_string + ";\n" +
-                        project_class_free_string + ";\n" +
-                        project_class_function_string + ";\n\n"
+    header_contents += (decl_spec_macro_insertion + project_class_allocation_string + ";\n" +
+                        decl_spec_macro_insertion + project_class_free_string + ";\n" +
+                        decl_spec_macro_insertion + project_class_function_string + ";\n\n"
                         )
 
     #include guard endif
     header_contents += "#endif " + "/* " + include_guard_string + "*/\n"
 
+
+    #Writing header file
     if not (os.path.exists(destination_directory)):
         os.mkdir(destination_directory)
+        
     new_class_header_file = open(new_class_filepath + ".h", "w")
     new_class_header_file.write(header_contents)
 
@@ -110,6 +113,8 @@ def generate_c_object(
     source_contents += "#include " + "\"" + snake_case_object_name.lower() + ".h\"\n"
     source_contents += "#include " + "<stdlib.h>\n"
 
+
+    #function implementations
     memory_allocation_function_name = stdlib_malloc_substitute
     memory_free_function_name = stdlib_free_substitute
 
@@ -137,6 +142,7 @@ def generate_c_object(
                         "\t{\n\t}\n}\n\n"
                         )
 
+    #Writing source file
     new_class_source_file = open(new_class_filepath + ".c", "w")
     new_class_source_file.write(source_contents)
     
