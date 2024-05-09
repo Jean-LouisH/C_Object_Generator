@@ -54,7 +54,7 @@ def generate_c_object(
 
     snake_cass_project_namespace = convert_to_snake_case(project_namespace)  
     snake_case_object_name = convert_to_snake_case(c_object_name)
-    project_object_name = project_namespace.capitalize() + c_object_name.capitalize()
+    project_object_name = project_namespace + c_object_name
     snake_case_project_object_name = convert_to_snake_case(project_object_name)
     include_guard_string = snake_case_project_object_name.upper() + "_H"
     new_class_filepath = destination_directory + "/" + snake_case_object_name.lower()
@@ -84,8 +84,8 @@ def generate_c_object(
         decl_spec_macro_insertion = declspec_macro + " "
 
     project_class_allocation_string = project_object_name + "* " + snake_case_project_object_name.lower() + "_allocate()"
-    project_class_free_string = "void " + snake_case_project_object_name.lower() + "_free(" + project_object_name + "* " + c_object_name.lower() + ")"
-    project_class_function_string = "void " + snake_case_project_object_name.lower() + "_function(" + project_object_name + "* " + c_object_name.lower() + ")"
+    project_class_free_string = "void " + snake_case_project_object_name.lower() + "_free(" + project_object_name + "* " + snake_case_object_name.lower() + ")"
+    project_class_function_string = "void " + snake_case_project_object_name.lower() + "_function(" + project_object_name + "* " + snake_case_object_name.lower() + ")"
 
         
     header_contents += (decl_spec_macro_insertion + project_class_allocation_string + ";\n" +
@@ -122,7 +122,7 @@ def generate_c_object(
         memory_allocation_function_name = "malloc"
         memory_free_function_name = "free"
     else:
-        source_contents += "#include " + "<" + declspec_macro_header + ">\n"
+        source_contents += "#include " + "<" + stdlib_substitute_header + ">\n"
 
     source_contents += "\n"
 
