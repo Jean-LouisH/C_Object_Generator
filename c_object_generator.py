@@ -73,6 +73,9 @@ def generate_c_object(
     if declspec_macro_header != "":
         header_contents += "#include <" + declspec_macro_header + ">\n\n"
 
+    #extern C
+    header_contents += "#ifdef __cplusplus\nextern \"C\" {\n#endif\n\n"
+
     #typedef struct
     header_contents += "typedef struct\n{\n}" + project_object_name + ";\n\n"
 
@@ -93,6 +96,9 @@ def generate_c_object(
                         decl_spec_macro_insertion + project_class_function_string + ";\n\n"
                         )
 
+    #extern C endif
+    header_contents += "#ifdef __cplusplus\n}\n#endif\n\n"
+    
     #include guard endif
     header_contents += "#endif " + "/* " + include_guard_string + "*/\n"
 
